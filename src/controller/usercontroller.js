@@ -38,6 +38,53 @@ let uploadFile= async ( file) =>{
 
  })
 }
+//.................................................REGEX For VALIDATION...........................................................
+
+
+ //EMAIL VALIDATION BY REJEX
+ const validateEmail = (email) => {
+  return (email).trim().match(
+    /^([A-Za-z0-9._]{3,}@[A-Za-z]{3,}[.]{1}[A-Za-z.]{2,6})+$/);
+};
+
+//PASSWORD VALIDATION BY REJEX
+const validatePassword = (password) => {
+  return String(password).trim().match(
+    /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/);
+};
+
+//STRING VALIDATION BY REJEX
+const validatefeild = (name) => {
+  return String(name).trim().match(
+    /^[a-zA-Z]/);
+};
+
+
+//STREET VALIDATION BY REJEX
+const validatestreet = (name) => {
+  return String(name).trim().match(
+    /^[a-zA-Z0-9_.-]/);
+};
+
+
+//VALIDATION OF MOBILE NO BY REJEX
+const validateNumber = (Feild) => {
+  return String(Feild).trim().match
+  (/^(?:(?:\+|0{0,2})91(\s*|[\-])?|[0]?)?([6789]\d{2}([ -]?)\d{3}([ -]?)\d{4})$/);
+};
+
+
+//VALIDATION OF pincode BY REJEX
+const validatepincode = (pincode) => {
+  return String(pincode).trim().match(
+    /^(\d{4}|\d{6})$/);
+};
+
+/*  //VALIDATION OF logolink BY REJEX
+const validateprofileImage= (Image) => {
+  return String(Image).trim().match
+  (/^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/);
+}; */
 
 
 //.............................................PHASE (1) Create user................................................
@@ -46,50 +93,6 @@ let uploadFile= async ( file) =>{
 const createuser = async (req, res) => {
   try {
 
-    //EMAIL VALIDATION BY REJEX
-    const validateEmail = (email) => {
-      return (email).trim().match(
-        /^([A-Za-z0-9._]{3,}@[A-Za-z]{3,}[.]{1}[A-Za-z.]{2,6})+$/);
-    };
-
-    //PASSWORD VALIDATION BY REJEX
-    const validatePassword = (password) => {
-      return String(password).trim().match(
-        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/);
-    };
-
-    //STRING VALIDATION BY REJEX
-    const validatefeild = (name) => {
-      return String(name).trim().match(
-        /^[a-zA-Z]/);
-    };
-
-
-    //STREET VALIDATION BY REJEX
-    const validatestreet = (name) => {
-      return String(name).trim().match(
-        /^[a-zA-Z0-9_.-]/);
-    };
-
-
-    //VALIDATION OF MOBILE NO BY REJEX
-    const validateNumber = (Feild) => {
-      return String(Feild).trim().match
-      (/^(?:(?:\+|0{0,2})91(\s*|[\-])?|[0]?)?([6789]\d{2}([ -]?)\d{3}([ -]?)\d{4})$/);
-    };
-
-
-    //VALIDATION OF pincode BY REJEX
-    const validatepincode = (pincode) => {
-      return String(pincode).trim().match(
-        /^(\d{4}|\d{6})$/);
-    };
-
-  /*  //VALIDATION OF logolink BY REJEX
-    const validateprofileImage= (Image) => {
-      return String(Image).trim().match
-      (/^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/);
-    }; */
 
 
 
@@ -327,10 +330,11 @@ res.status(500).send({ status: false, message: err.message });
 //..............................................PUT /user/:userId/profile..........................................................
 
 
-/* const updateUserById = async function (req, res) {
+const updateUserById = async function (req, res) {
   try {
 
     const userId = req.params.userId;
+    let files= req.files
 
 
     if (!userId){
@@ -342,25 +346,26 @@ res.status(500).send({ status: false, message: err.message });
     return res.status(400).send({ status: false, message: "UserId is Not Valid" });
   }
 
-    const findUserDetails = await userModel.findOne({_id: userId})
+    const findUserDetails = await userModel.findOne({_id: userId}).select({ address:1,_id:1,fname:1,lname:1,email:1,profileImage:1,phone:1,password:1,createdAt:1,updatedAt:1,__v:1});
     if (!findUserDetails) {
         return res.status(404).send({ status: false, message: "User Not Found" });
     }
 
-    if (!req.body.fname && !req.body.lname && !req.body.email && !req.body.profileImage && !req.body.phone && !req.body.password && !req.body.address.shipping.street && !req.body.address.shipping.city && !req.body.address.shipping.pincode && !req.body.address.billing.street && !req.body.address.billing.city && !req.body.address.billing.pincode) {
+    if (!req.body.fname && !req.body.lname && !req.body.email && !req.files && !req.body.phone && !req.body.password && !req.body.address) {
       return res.status(400).send({ status: false, message: "Please Provide data to update" })
     }
 
     if (req.body.fname) {
       findUserDetails.fname = req.body.fname
 
-      if (!validatefeild(findUserDetails.fname)) {
+
+      if (!validatefeild (findUserDetails.fname)) {
         return res.status(400).send({ status: false, message: "Invalid fname", });
       }
 
       let validString = /\d/;
-      if (validString.test(findUserDetails.fname.trim())) return res.status(400).send({ status: false, message: "Invalid fname! It Should Contain Only aplhabets" });
-     }
+      if (validString.test(req.body.fname.trim())) return res.status(400).send({ status: false, message: "Invalid fname! It Should Contain Only aplhabets" });
+    }
     if (req.body.lname) {
       findUserDetails.lname = req.body.lname
 
@@ -368,6 +373,7 @@ res.status(500).send({ status: false, message: err.message });
     if (!validatefeild(findUserDetails.lname)) {
       return res.status(400).send({ status: false, message: "Invalid lname", });
     }
+    let validString = /\d/;
 
     if (validString.test(findUserDetails.lname.trim())) return res.status(400).send({ status: false, message: "Invalid lname! It Should Contain Only aplhabets" });
     }
@@ -386,17 +392,7 @@ res.status(500).send({ status: false, message: err.message });
     }
 
     }
-    if (req.body.profileImage) {
-      findUserDetails.profileImage = req.body.profileImage
 
-      if(profileImage && profileImage.length>0){
-          let uploadedFileURL= await uploadFile( files[0] )
-          findUserDetails.profileImage=uploadedFileURL
-      }
-      else{
-          return res.status(400).send({ msg: "No file found" })
-      }
-    }
     if (req.body.phone) {
       findUserDetails.phone = req.body.phone
 
@@ -417,75 +413,94 @@ res.status(500).send({ status: false, message: err.message });
       if (!validatePassword(findUserDetails.password)) {
         return res.status(400).send({ status: false, message: "Password Must contain at-least One number,One special character,One capital letter & length Should be 8-15", }); //password validation
       }
-      data.password = bcrypt.hashSync(req.body.password,10);
+      findUserDetails.password = bcrypt.hashSync(req.body.password,10);
 
     }
+
+    if(req.body.address)
+    {
+      if(req.body.address.shipping){
     if (req.body.address.shipping.street) {
       findUserDetails.address.shipping.street = req.body.address.shipping.street
+      if (!validatestreet( findUserDetails.address.shipping.street)) {
+        return res.status(400).send({ status: false, message: "Street must contain Alphabet or Number", });
+      }
+
+
     }
     if (req.body.address.shipping.city) {
       findUserDetails.address.shipping.city = req.body.address.shipping.city
+      if (!validatefeild(findUserDetails.address.shipping.city)) {
+        return res.status(400).send({ status: false, message: "Invalid City!It should not contain number"});
+      }
+      let validcity= /\d/;
+      if (validcity.test(req.body.address.shipping.city)) return res.status(400).send({ status: false, msg:  "Invalid City!It should not contain number"});
+
+
     }
     if (req.body.address.shipping.pincode) {
       findUserDetails.address.shipping.pincode = req.body.address.shipping.pincode
+
+      if (!validatepincode(findUserDetails.address.shipping.pincode)) {
+        return res.status(400).send({ status: false, message: "Invalid Pincode", });
+      }
     }
+  }
+  if(req.body.address.billing){
     if (req.body.address.billing.street) {
       findUserDetails.address.billing.street = req.body.address.billing.street
+
+      if (!validatestreet(findUserDetails.address.billing.street)) {
+        return res.status(400).send({ status: false, message: "Invalid Street!", });
+      }
+
     }
     if (req.body.address.billing.city) {
       findUserDetails.address.billing.city = req.body.address.billing.city
+      if (!validatefeild( findUserDetails.address.billing.city)) {
+        return res.status(400).send({ status: false, message: "Invalid City!It should not contain number", });
+      }
+      let validbillingcity= /\d/;
+
+      if (validbillingcity.test(req.body.address.billing.city)) return res.status(400).send({ status: false, msg:  "Invalid City!It should not contain number"});
+
+
     }
     if (req.body.address.billing.pincode) {
       findUserDetails.address.billing.pincode = req.body.address.billing.pincode
+
+      if (!validatepincode( findUserDetails.address.billing.pincode)) {
+        return res.status(400).send({ status: false, message: "Invalid Pincode", });
+      }
     }
+  }
+  }
+
+  if (req.files) {
 
 
-
-
-
-
-
-
-    //Title validation by Rejex
-    if (!validatefeild(Bookdetails.title)) {
-      return res.status(400).send({ status: false, message: "Title must contain Alphabet or Number", });
+    if(files && req.files.length>0){
+        let uploadedFileURL= await uploadFile( files[0] )
+        findUserDetails.profileImage=uploadedFileURL
     }
-
-    const findtitle = await BookModel.findOne({ title: req.body.title }); //title exist or not
-
-    if (findtitle) {
-      return res.status(400).send({ status: false, message: `${req.body.title} Title Already Exist.Please,Give Another Title` })
+    else{
+        return res.status(400).send({ msg: "No file found" })
     }
+  }
 
-
-    if (!validatefeild(Bookdetails.excerpt)) {
-      return res.status(400).send({ status: false, message: "excerpt must contain Alphabet or Number", });
-    }
-
-
-    if (!isValidISBN(Bookdetails.ISBN)) {
-      return res.status(400).send({ status: false, message: "INVALID ISBN", });
-    }
-    const findISBN = await BookModel.findOne({ ISBN: req.body.ISBN })  //gives whole data
-    if (findISBN) {
-      return res.status(400).send({ status: false, message: `${req.body.ISBN} ISBN Already Exist.Please,Give Another ISBN` })
-    }
-    if (!isValidDate(Bookdetails.releasedAt)) {
-      return res.status(400).send({ status: false, message: "Invalid Format of releasedAt", });
-    }
-    Bookdetails.save()
-   return res.status(200).send({ status: true, message:"Success", data: Bookdetails })
+   findUserDetails.save()
+   return res.status(200).send({ status: true, message:"User Profile updated", data: findUserDetails })
 
   }
   catch (err) {
     res.status(500).send({ status: false, error: err.message })
   }
 }
- */
+
 
 
 module.exports.createuser = createuser
 module.exports.login = login
 module.exports.getuserdata = getuserdata
-/* module.exports.updateUserById = updateUserById */
+module.exports.updateUserById = updateUserById
 
