@@ -238,7 +238,7 @@ const createuser = async (req, res) => {
               data.profileImage=uploadedFileURL
           }
           else{
-              return res.status(400).send({ msg: "No file found" })
+              return res.status(404).send({ msg: "No file found" })
           }
     const user = await userModel.create(data);
     return res.status(201).send({ status: true, message: "User created successfully", data:user });
@@ -284,13 +284,15 @@ const login = async function (req, res) {
 
     let token = jwt.sign(
       { "UserId": findemail._id },
-      "group51", { expiresIn: '5h'}  //sectetkey
+      //sectetkey
+      "7dfcdb28dc1cea52f80fd28dca4124530b260c8b8f6afe2bb07b68441189738d3e464339a279ee42f726a488f8efa4c3cf57570977cd6d1a108a9b3943215375", 
+      { expiresIn: '5h'}  
     );
 
     res.setHeader("x-api-key", token);
     /* let  details = JSON.parse(JSON.stringify(findemail._id))
     details.token = token */
-    res.status(200).send({ status: true, message:"User login successfull",data: token });
+    res.status(200).send({ status: true, message:"User login successfull",data: {userId:findemail._id, token:token} });
   }
 
   catch (err) {
