@@ -54,5 +54,38 @@ const validateprofileImage= (Image) => {
   return String(Image).trim().match
   (/^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/);
 }; */
+/*const isValidSizes = (availableSizes) => {
+  return ["S", "XS", "M", "X", "L", "XXL", "XL"].indexOf(availableSizes) !== -1
+}
+const isRs = (currencyFormat) => {
+  return ["Rs"].indexOf(currencyFormat) !== -1
 
-module.exports = { validateEmail, validatePassword, validateFeild, validateStreet, validateNumber, validatePincode, isValidObjectId,isValidBody }
+}
+const isINR = (currencyId) => {
+  return ["INR"].indexOf(currencyId) !== -1
+
+}*/
+//Validating currency type
+let isValidCurrency = (value) => {
+  if (value.trim().toUpperCase() !== "INR") return false;
+  return true;
+}
+
+//Validating currency format
+let isValidCurrencyFormat = (value) => {
+  if (value.trim().toUpperCase() !== "₹") return false;
+  return true;
+}
+//Validating size
+let isValidSize = (value) => {
+  let validSize = ["S", "XS", "M", "X", "L", "XXL", "XL"];
+  if (!validSize.includes(value.trim())) return false;
+  return true;
+}
+//Validating boolean type
+let isValidBoolean = (value) => {
+  console.log(typeof value)
+  if (typeof (value) != "boolean") return false;
+  return true;
+}
+module.exports = { validateEmail, validatePassword, validateFeild, validateStreet, validateNumber, validatePincode, isValidObjectId, isValidBody,isValidCurrency, isValidCurrencyFormat,isValidSize,isValidBoolean}

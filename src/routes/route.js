@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router();
 const {createUser,login,getUserData,updateUserById} = require("../controllers/usercontroller");
 const {authentication,authorization} =require('../middlewares/auth')
-const {createProduct} = require("../controllers/productController");
+const {createProduct,updateProduct} = require("../controllers/productController");
 
 
 //user Register
@@ -13,9 +13,7 @@ router.put('/user/:userId/profile', authentication,authorization, updateUserById
 
 //Product
 router.post("/products", createProduct)
-
-
-
+//router.post("/update/:productId", updateProduct)
 
 
 //If url is Incorrect

@@ -86,7 +86,7 @@ const createUser = async (req, res) => {
     if (!data.address.shipping.street) {
       return res.status(400).send({ status: false, message: "Please Provide street for shipping" });
     }
-    if (!validateStreet(data.address.street)) {
+    if (!validateStreet(data.address.shipping.street)) {
       return res.status(400).send({ status: false, message: "Street must contain Alphabet or Number", });
     }
     if (!data.address.shipping.city) {
@@ -149,7 +149,12 @@ const createUser = async (req, res) => {
 
 const login = async function (req, res) {
   try {
-    const data = req.body;
+    let data;
+    if (req.body.data) {
+      data = JSON.parse(req.body.data)
+    } else {
+      data = req.body;
+    }
 
     if (!isValidBody(data)) {
       return res.status(400).send({ status: false, message: "Feild Can't Empty.Please Enter Some Details" }); //details is given or not
