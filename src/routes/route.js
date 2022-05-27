@@ -2,18 +2,22 @@ const express = require('express')
 const router = express.Router();
 const {createUser,login,getUserData,updateUserById} = require("../controllers/usercontroller");
 const {authentication,authorization} =require('../middlewares/auth')
-const {createProduct,updateProduct} = require("../controllers/productController");
+const {createProduct,getProduct,updateProduct} = require("../controllers/productController");
 
 
 //user Register
 router.post("/register", createUser)
 router.post('/login', login)
-router.get('/user/:userId/profile', authentication,authorization, getUserData)
+router.get('/user/:userId/profile', authentication, getUserData)
 router.put('/user/:userId/profile', authentication,authorization, updateUserById)
 
 //Product
 router.post("/products", createProduct)
-//router.post("/update/:productId", updateProduct)
+router.get("/products", getProduct)
+router.put("/products/:productId", updateProduct)
+
+
+
 
 
 //If url is Incorrect
